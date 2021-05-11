@@ -8,28 +8,115 @@ public class YardSaleScanner {
 	public static void main(String[] args) {
 	
 		double money = 53.00;
-		double biggestPurchase = 0;	// Tracking biggest purchase
 		
 		Scanner askJeeves = new Scanner(System.in);
 		
 		System.out.println("\n\nHello.\nWelcome to what's left of Ebay!\nYou have $" + money + " to spend.\n");
-		
-		while(money >= 5.0) {
-			double pocketChange = yardSale(askJeeves, money);
-			money = Math.ceil(money - pocketChange);
-			System.out.println("\nYou have $" + money + " left in your pocket!");
-				if(pocketChange > biggestPurchase) {
-					biggestPurchase = pocketChange;
-				}
-		} 
-		System.out.println("\nYour pocket feels light at only $" + money + ".\nGood junking!.");
-		//System.out.println("You bought " + repoMan. + "items.");
-		System.out.println("\nYour most expensive item was $" + Math.ceil(biggestPurchase) + "!\nYou lush.");
+		double postPurchaseFunds = yardSale(askJeeves, money);
+		System.out.println("You spent a total of $" + (money - postPurchaseFunds) + ".\n\nThanks for junking!");
 	}
 	
-	public static int randomNumber(int x) { // Method for array selection randomization
+	public static double yardSale(Scanner s, double money) {
+		double postPurchaseFunds = 0; // Total to return
+		
+		//Variables to store most expensive item
+		//String priciestItemName = ""; 
+		double priciestItemCost = 0;
+		
+		//Counting items purchased
+		int quantityCount = 0;
+		
+		//Loop for User Prompts
+		while(money >= 5.0) {
+			
+			//Random item cost for user prompt
+			double price = pricePick(); 
+			
+			//Random item for user prompt
+			String item = itemPick();
+			
+			System.out.println("\nYou'd like to purchase\n" + item + " for $" + price + "?\n\n Type True or False");
+			
+			if(s.hasNextBoolean()) {
+				boolean answer = s.nextBoolean();
+				
+				if(answer && price >= 10) {
+					System.out.println("\nYou said you weren't going to spend more than $10 on something. \nI can't let you break that promise.");
+				
+				
+				} else if(answer) {
+					
+					//Taking in item quantity
+					System.out.println("\nHow many would you like?");
+					
+					if(s.hasNextInt()) {
+						
+						int quantity = s.nextInt();
+						
+						if(quantity <= 0) {
+							
+							System.out.println("\nGuess you changed your mind? Let's see what else is available.");
+							
+						} else if(money - (price * quantity) < 0) {
+							
+							System.out.println("\nNah. That's gonna put you over your budget. Let's try something else.");
+							
+						} else {
+							
+							System.out.println("\nSweet purchase.");//\n\n" + "Quantity : " + quantity + "\n" + "Item : " + item + "\n" + "You Paid : $" + Math.ceil(quantity * price) + "\n");
+							
+							quantityCount = quantityCount + quantity;
+							
+							
+							if(price > priciestItemCost) {
+								
+								priciestItemCost = price;
+								//priciestItemName = item;
+								
+							}
+							money = money - (price * quantity);
+							
+						}
+					
+					} else {
+						
+						s.nextLine();
+						System.out.println("\nOops, looks like someone else snatched it up while you were fumbling...");
+					}
+					
+				} else if(!answer) {
+					
+					if(price >= 10.0) {
+						System.out.println("\nYou said you weren't going to spend more than $10 on something.\nWay to stick to your guns.");
+					} else {
+						System.out.println("\nSmart choice.");
+					}
+				}
+				
+			} else {
+				s.nextLine();
+				System.out.println("\nOops, looks like someone else snatched it up while you were fumbling...");
+			}
+			
+			if(money > 5.0) {
+			System.out.println("\nYour wallet: $" + money);
+			}
+			
+				
+			}
+		
+		postPurchaseFunds = money;
+		System.out.println("\nYou seem lighter.  You have $" + money + " left over.");
+		System.out.println("You purchased " + quantityCount + " items. What a lush!");
+		System.out.println("Your most expensive item cost $" + priciestItemCost + "!");
+		
+		return postPurchaseFunds;
+		
+		}
+	
+	public static int randomNumber(int arrayLength) { // Method for array selection randomization
 		Random rand = new Random();
-		int randNum = rand.nextInt(x);
+		int randNum = rand.nextInt(arrayLength);
 		return randNum;
 	}
 	
@@ -45,42 +132,4 @@ public class YardSaleScanner {
 		return prices[index];
 	}
 	
-	
-	public static double yardSale(Scanner s, double money) {
-		double price = pricePick();
-		String item = itemPick();
-		
-		System.out.println("\nYou'd like to purchase\n" + item + " for $" + price + "?\n\nTrue or False?");
-		boolean answer = s.nextBoolean();
-		
-			if(answer && price >= 10) {
-				System.out.println("\nYou said you weren't going to spend more than $10 on something. \nI can't let you break that promise.");
-			
-			} else if(answer) {
-				System.out.println("\nHow many would you like?");
-				int quantity = s.nextInt();
-				if(quantity < 0) {
-					System.out.println("\nCheeky. Repoed.");
-				} else if(quantity == 0) {
-					System.out.println("\nGuess you changed your mind.");
-				} else if(money - (price * quantity) < 0.0) {
-					System.out.println("\nNah. That's gonna put you over your budget. Let's find you something else.");
-				} else {
-					
-					System.out.println("\nSweet purchase.\n\n" + "Quantity : " + quantity + "\n" + "Item : " + item + "\n" + "You Paid : $" + Math.ceil(quantity * price) + "\n");
-					return (price * (double)quantity);
-				}
-			}else if(!answer) {
-				if(price >= 10.0) {
-				System.out.println("\nYou said you weren't going to spend more than $10 on something.\nWay to stick to your guns.");
-				} else {
-					System.out.println("\nSmart choice.");
-				}
-			} else {
-				System.out.println("\nOops, looks like someone else snatched it up while you were fumbling...)");
-			}
-			
-		return 0; //change this to the correct amount
-	}
-
 }
