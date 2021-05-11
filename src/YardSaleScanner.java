@@ -10,19 +10,21 @@ public class YardSaleScanner {
 		double money = 53.00;
 		double biggestPurchase = 0;	// Tracking biggest purchase
 		
-		Scanner repoMan = new Scanner(System.in);
+		Scanner askJeeves = new Scanner(System.in);
+		
+		System.out.println("\n\nHello.\nWelcome to what's left of Ebay!\nYou have $" + money + " to spend.\n");
 		
 		while(money >= 5.0) {
-			double pocketChange = yardSale(repoMan, money);
-			money = money - pocketChange;
+			double pocketChange = yardSale(askJeeves, money);
+			money = Math.ceil(money - pocketChange);
 			System.out.println("\nYou have $" + money + " left in your pocket!");
 				if(pocketChange > biggestPurchase) {
 					biggestPurchase = pocketChange;
 				}
 		} 
-		System.out.println("\nYour pocket feels light at only $" + money + ".\nTime to go home.");
+		System.out.println("\nYour pocket feels light at only $" + money + ".\nGood junking!.");
 		//System.out.println("You bought " + repoMan. + "items.");
-		System.out.println("\nYour most expensive item was $" + biggestPurchase + "!\nYou lush.");
+		System.out.println("\nYour most expensive item was $" + Math.ceil(biggestPurchase) + "!\nYou lush.");
 	}
 	
 	public static int randomNumber(int x) { // Method for array selection randomization
@@ -48,7 +50,7 @@ public class YardSaleScanner {
 		double price = pricePick();
 		String item = itemPick();
 		
-		System.out.println("You'd like to purchase\n" + item + "\nfor $" + price + "?\nTrue or False?");
+		System.out.println("\nYou'd like to purchase\n" + item + " for $" + price + "?\n\nTrue or False?");
 		boolean answer = s.nextBoolean();
 		
 			if(answer && price >= 10) {
