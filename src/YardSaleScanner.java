@@ -1,135 +1,169 @@
-import java.util.Scanner;
 import java.util.Random;
+import java.util.Scanner;
+import java.util.*;
+import java.text.DecimalFormat;
 
-// Hannah Wenger
+//Hannah Wenger
 
 public class YardSaleScanner {
-	
+
 	public static void main(String[] args) {
-	
-		double money = 53.00;
-		
-		Scanner askJeeves = new Scanner(System.in);
-		
-		System.out.println("\n\nHello.\nWelcome to what's left of Ebay!\nYou have $" + money + " to spend.\n");
-		double postPurchaseFunds = yardSale(askJeeves, money);
-		System.out.println("You spent a total of $" + (money - postPurchaseFunds) + ".\n\nThanks for junking!");
+			
+			double money = 53.00; //Can be changed, user buy power
+			
+			Scanner askJeeves = new Scanner(System.in);
+			
+			System.out.println("\n\nHello.\nUser7434 to purchase some of your ebay items.\n");
+			double postPurchaseFunds = yardSale(askJeeves, money);
+			String formattedMoney = moneyFormatter((money - postPurchaseFunds));
+			System.out.println("\nUser7434 spent a total of $" + (formattedMoney) + " on your store.\n\nThanks for junking!");
+
 	}
 	
-	public static double yardSale(Scanner s, double money) {
-		double postPurchaseFunds = 0; // Total to return
-		
-		//Variables to store most expensive item
-		//String priciestItemName = ""; 
-		double priciestItemCost = 0;
-		
-		//Counting items purchased
-		int quantityCount = 0;
-		
-		//Loop for User Prompts
-		while(money >= 5.0) {
-			
-			//Random item cost for user prompt
-			double price = pricePick(); 
-			
-			//Random item for user prompt
-			String item = itemPick();
-			
-			System.out.println("\nYou'd like to purchase\n" + item + " for $" + price + "?\n\n Type True or False");
-			
-			if(s.hasNextBoolean()) {
-				boolean answer = s.nextBoolean();
-				
-				if(answer && price >= 10) {
-					System.out.println("\nYou said you weren't going to spend more than $10 on something. \nI can't let you break that promise.");
-				
-				
-				} else if(answer) {
-					
-					//Taking in item quantity
-					System.out.println("\nHow many would you like?");
-					
-					if(s.hasNextInt()) {
-						
-						int quantity = s.nextInt();
-						
-						if(quantity <= 0) {
-							
-							System.out.println("\nGuess you changed your mind? Let's see what else is available.");
-							
-						} else if(money - (price * quantity) < 0) {
-							
-							System.out.println("\nNah. That's gonna put you over your budget. Let's try something else.");
-							
-						} else {
-							
-							System.out.println("\nSweet purchase.");//\n\n" + "Quantity : " + quantity + "\n" + "Item : " + item + "\n" + "You Paid : $" + Math.ceil(quantity * price) + "\n");
-							
-							quantityCount = quantityCount + quantity;
-							
-							
-							if(price > priciestItemCost) {
-								
-								priciestItemCost = price;
-								//priciestItemName = item;
-								
-							}
-							money = money - (price * quantity);
-							
-						}
-					
-					} else {
-						
-						s.nextLine();
-						System.out.println("\nOops, looks like someone else snatched it up while you were fumbling...");
-					}
-					
-				} else if(!answer) {
-					
-					if(price >= 10.0) {
-						System.out.println("\nYou said you weren't going to spend more than $10 on something.\nWay to stick to your guns.");
-					} else {
-						System.out.println("\nSmart choice.");
-					}
+	// Method for Validating Item Price User Input
+	
+	public static double itemPrice(Scanner s, String item) {
+		while(true) {
+			System.out.println("\nHow much would you like to sell " + item + " for?");
+			if(s.hasNextDouble()) {
+				double price = s.nextDouble();
+				s.nextLine();
+				if(price > 0) {
+
+					return price;
+				} else {
+					s.nextLine();
+					System.out.println("\nInvalid price of $" + price + ". Enter a price greater than $0.");
 				}
-				
 			} else {
 				s.nextLine();
-				System.out.println("\nOops, looks like someone else snatched it up while you were fumbling...");
+				System.out.println("\nWoops. Invalid input. Try again.");
 			}
 			
-			if(money > 5.0) {
-			System.out.println("\nYour wallet: $" + money);
-			}
-			
-				
-			}
-		
-		postPurchaseFunds = money;
-		System.out.println("\nYou seem lighter.  You have $" + money + " left over.");
-		System.out.println("You purchased " + quantityCount + " items. What a lush!");
-		System.out.println("Your most expensive item cost $" + priciestItemCost + "!");
-		
-		return postPurchaseFunds;
-		
 		}
+		
+	}
 	
-	public static int randomNumber(int arrayLength) { // Method for array selection randomization
+	//Method for Validating Item Quantity User Input
+	
+	public static int itemQuantity(Scanner s, double price) {
+	while(true) {
+		System.out.println("\nHow many would you like to sell?");
+			if(s.hasNextInt()) { 
+				int quantity = s.nextInt();
+				s.nextLine();
+				if(quantity > 0) {
+					return quantity;
+				} else {
+					s.nextLine();
+					System.out.println("\nInvalid quantity of " + quantity + ". Enter a numeric quantity greater than 1.");
+				}
+			} else {
+				s.nextLine();
+				System.out.println("\nWoops. Invalid input. Try again");
+			}
+		}
+	}
+	
+	//Method to calculate remaining money after purchase is made
+	public static double walletCalculation(int quantity, double price, double remainingMoney) {
+		remainingMoney = remainingMoney - (quantity * price);
+		
+		return remainingMoney;
+	}
+	
+	//Method to return boolean if purchase was valid
+	public static boolean validPurchase(int quantity, double price, double remainingMoney) {
+		if(price > 10 || remainingMoney - (quantity * price) < 0) {
+			return false;
+		} else {
+			return true;
+		}
+				
+	}
+	
+	//Method for array selection randomization
+	public static int randomNumber(int arrayLength) { 
 		Random rand = new Random();
 		int randNum = rand.nextInt(arrayLength);
 		return randNum;
 	}
 	
+	//Method to randomly select item for sale
 	public static String itemPick() {
-		String items [] = {"some boots", "a bag of pencils", "woodchips", "a dirty hamster cage", "an old can of cambells", "a tattered copy of Men are from Mars,\n Women are From Venus", "old Halloween decorations", "a Marilyn Monroe poster", "a scratched Moby CD", "ugly  doctor's office art", "a used toothbrush", "a waffle maker", "an as see on TV waffle IRON", "Grease on VHS", "ill-fitting clothing", "some guitar strings", "a music box with a human tooth inside", "a singing fish, batteries included!", "kid rock poster covered in hairy tape", "a rusted lawn ornament", "water stained thank you cards", "a furby", "a shoebox of old batteries", "a book you'll never read"};
+		String items [] = {"some boots", "a bag of pencils", "woodchips", "a dirty hamster cage", "an old can of cambells", "a tattered copy of Men are from Mars,\nWomen are From Venus", "old Halloween decorations", "a Marilyn Monroe poster", "a scratched Moby CD", "ugly doctor's office art", "a used toothbrush", "a waffle maker", "an as seen on TV waffle IRON", "Grease on VHS", "ill-fitting clothing", "some guitar strings", "a music box with a human tooth inside", "a singing fish, batteries included!", "a Kid Rock poster covered in hairy tape", "a rusted lawn ornament", "water stained thank-you cards", "a furby", "a shoebox of old batteries", "a book you'll never read"};
 		int index = randomNumber(items.length);
 		return items[index];
 	}
+	//Method returning string for pretty money printing without affecting actual value
+	public static String moneyFormatter(double money) {
+		
+	DecimalFormat moneyFormat = new DecimalFormat("0.00");
+	String formattedMoney = moneyFormat.format(money);
 	
-	public static double pricePick() {
-		double prices [] = {12.50, 7.00, 4.75, 0.25, 8.00, 9.25, 3.50, 2.50, 1.00, .50, 3.00, 4.00, 2.00, 1.00, 1.50, 6.00, 6.66, 4.80, 5.10, 0.10, 4.13, 7.77, 9.99 };
-		int index = randomNumber(prices.length);
-		return prices[index];
+	return formattedMoney;
 	}
 	
+	public static double yardSale(Scanner s, double money) {
+		
+		//Variable to return and store amount of money user has left in wallet
+		double remainingMoney = money;
+		
+		
+		//Linked Lists!!!
+		LinkedList<Double> prices = new LinkedList<Double>();
+		LinkedList<Integer> quantities = new LinkedList<Integer>();
+		LinkedList<Boolean> purchases = new LinkedList<Boolean>();
+		LinkedList<Double> remainingCoin = new LinkedList<Double>();
+		LinkedList<String> itemPurchased = new LinkedList<String>();
+		
+		//Begin user Prompts
+		while(remainingMoney >= 5.0) {
+		
+		//Calling random item selection method
+		String item = itemPick();
+		
+		//Price Prompt
+		double price = itemPrice(s, item);
+		prices.add(price);
+		//Quantity Prompt
+		int quantity = itemQuantity(s, price);
+		quantities.add(quantity);
+		//Validate Purchase
+		boolean purchased = validPurchase(quantity, price, remainingMoney);
+		purchases.add(purchased);
+		//Calculate Money Remaining
+		if(purchased) {
+			remainingMoney = walletCalculation(quantity, price, remainingMoney);
+		}
+		remainingCoin.add(remainingMoney);
+		itemPurchased.add(item);
+		String formattedMoney = moneyFormatter(remainingMoney);
+		System.out.println(formattedMoney); // This is to show something is happening with prompts before data is displayed
+		}
+		
+		int quantityCount = 0; //Variable to track # of purchases
+		double greatestExpense = 0; // Variable to track most expensive purchase
+		int j = 0;
+		
+		
+		// Print Results
+		for(int i = 0; i < quantities.size(); i++) {
+			System.out.println("\n\n\nItem: " + itemPurchased.get(i) + "\n\nPrice: $" + prices.get(i) + "\n\nQuantity: " + quantities.get(i) + "\n\nSold: " + purchases.get(i) + "\n\nUser Wallet: $" + moneyFormatter(remainingCoin.get(i)));
+			if(purchases.get(i)) {
+				quantityCount = quantities.get(i) + quantityCount;
+				if(prices.get(i) * quantities.get(i) > greatestExpense) {
+					greatestExpense = prices.get(i) * quantities.get(i);
+					j = i;
+					
+				}
+			} 
+
+		}
+		
+		System.out.println("\n\nUser purchased: " + quantityCount + " items");
+		System.out.println("\nMost expensive purchase: $" + greatestExpense + " for " + quantities.get(j) + " of your " + itemPurchased.get(j) + ".\nWow" );
+
+		return remainingMoney;
+	}
 }
